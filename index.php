@@ -1,14 +1,12 @@
 <?php
 
-	$configs = include('config.php');
+	require_once('controller/GameController.php'); 
 
-	print_r($_GET);
-	print_r($_POST);
-
-
+	# load configuration settings from file
+	$configs = include('resources/config.php');
 
 
-	// extract values from slash command
+	# extract values from slash command
 	$token = $_POST['token'];
 
 	$team_id = $_POST['team_id'];
@@ -19,9 +17,26 @@
 
 	$text = $_POST['text'];
 
-	echo $configs['token'];
 
+	
+	if ($token != $configs['token']) { 
+		# exit if request token does not match the configured token
+		$reply = $configs['tokenMismatchMessage'];
+	} else {
+		# create a new game controller and pass the user command to it
+		$gameController = new GameController;
+		try {
+			$reply = $gameController->command($text);
+		} catch(Exception $e) {
+			$reply = $e->__toString();
+		}
+	}
 
+	# relay response
+	echo $reply;
+	exit();
+
+?>
 
 
 
