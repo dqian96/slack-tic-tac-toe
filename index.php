@@ -3,7 +3,7 @@
 	require_once('controller/GameController.php'); 
 
 	# load configuration settings from file
-	$configs = include('resources/config.php');
+	$configs = include('resources/server-config.php');
 
 
 	# extract values from slash command
@@ -34,7 +34,6 @@
 
 	# relay response
 	echo $reply;
-	exit();
 
 ?>
 
