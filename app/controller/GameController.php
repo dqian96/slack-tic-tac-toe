@@ -4,30 +4,15 @@
 
 	# controller class for the Game
 	class GameController {
-		const private $configs = include('resources/controller-config.php');
+		const private $configs = include('../resources/controller-config.php');
 		
 		# game model
 		private $game;
 
-		public function __construct() {
-			# load previous state information
-			$state = file_get_contents('../resources/' + configs['gameSaveName']);
-			if (!$state) {
-				# create a new game model if no state exists
-				$game = new Game;
-			} else {
-				# load state from file
-				$game = unserialize($state);
-			}
+		public function __construct($game) {
+			$this->game = $game;
    		}
-
-
-		public function __destruct() {
-			# save game state
-			$state = serialize($game);
-  			file_put_contents('../resources/' + configs['gameSaveName'], $state);
-   		}
-
+   		
    		# mapping from user input to game logic
   		public function command($text) {
    			$action = explode(" ", $text);
@@ -37,6 +22,21 @@
 	   			switch ($action[0]) {
 	   				case 'board':
 	   					$board = $game->getBoard();
+	   					$boardLength = $game->getBoardLength();
+	   					$winData = $game->getWinData();
+	   					$squareLength = configs['squareLength'];
+	   					$boardImage = new GameBoardImage($boardLength, $board, $winData, $squareLength);
+
+	   					$boardImageURL = $_SERVER['SERVER_NAME'] . '/' . $boardImage->outputImage();
+
+	   					$numTurn = $game->getNumberOfTurns();
+
+	   					$reply = array();
+	   					$reply['text'] = "The board at turn " . $numTurn . " looks like:";
+	   					$reply['attachments'] = array();
+	   					array_push($reply['attachments'], )
+
+
 	   					break;
 	   				case 'leaderboard':
 	   					break;

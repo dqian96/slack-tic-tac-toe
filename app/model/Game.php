@@ -19,30 +19,82 @@
 		private $loser
 		private $tie;
 
-		# winningMethod is an array containing the winning rows, columns, diagonals
-		private $winningMethod;
+		# winData is an array containing the winning rows, columns, diagonals
+		private $winData;
 
 		# array of 0,-1,1 modelling the game board
-		# player 1 (X) -- 1
-		# player 2 (O) -- -1
-		# unplayed -- 0
+		# player 1 (X): 1
+		# player 2 (O): -1
+		# unplayed: 0
 		private $board;
-		# width of board (the board is always a square with odd width)
+		# width of board (the board is always a square with odd length)
 		private $boardLength;
 
 		private $numberOfTurns;
 
-		# 2D array storing past players in sorted order of W/L ratio
+		# 2D array storing past players in reverse sorted order of W/L ratio
 		private $leaderboard;
 		
-
 		public function __construct() {
  			$leaderboard = array();
  		}
 
+ 		# getter functions
+		public function isTied() {
+			return $tie;
+		}
+		
+		public function getWinData() {
+			return $winData;
+		}
+
+		public function getWinner() {
+			return $winner;
+		}
+
+		public function getLoser() {
+			return $loser;
+		}
+
+		public function getBoardLength() {
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
+			return $boardLength;
+		}
+
+		public function getGameAlive() {
+			return $gameAlive;
+		}
+
+		public function getBoard() {
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
+			return $board;
+		}
+
+		public function getLeaderboard() {
+			return $leaderboard;
+		}
+
+		public function getNumberOfTurns() {
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
+			return $numberOfTurns;
+		}
+
+ 		# create a new game
 		public function newGame($boardLength, $player1, $player2) {
+			# throws an exception if a game already exists
+			if (gameAlive) {
+				throw new GameExistenceException(0);
+			}
+
+			# throws an exception if the board specifications are invalid
 			if (!($boardLength >= 3 and $boardLength <= 99 and $boardLength % 2 == 1)) {
-				throw BoardException($boardLength);
+				throw new BoardException($boardLength);
 			}
 
 			# set up players
@@ -53,37 +105,41 @@
 
 			$currentPlayer = $player1;
 			
+			# refresh board, with dimensions, boardLength x boardLength
 			$this->boardLength = $boardLength;
-
-			# set up board, with dimensions, boardLength x boardLength
 			$board = array();
 			for ($i = 0; $i < $boardLength * $boardLength; $i++) {
 				$board[] = $i;
 			}
 
+			# refresh game win state
 			$winner = '';
 			$loser = '';
 			$tie = false;
 
-			$winningMethod = array(
+			$winData = array(
 				'row' => -1,
 				'column' => -1,
 				'diagonalLR' => -1,
 				'diagonalRL' => -1,
 			);
-
 			$gameAlive = true;
 			$this->numberOfTurns = 0;
 		}
 
+		# player makes a move on the board
 		public function makeMove($player, $move) {
+			# throws an exception if a game doesn't exists
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
+
 			if ($player != $currentPlayer) {
 				if ($player != $player1 and $player != $player2) {
-					throw PlayerNotInGameException($player);
+					throw new PlayerNotInGameException($player);
 				} else {
-					throw WrongTurnException($player, $currentPlayer);
+					throw new WrongTurnException($player, $currentPlayer);
 				}
-
 			} else {
 				$numberOfTurns += 1;
 				if ($player == $player1) {
@@ -97,23 +153,29 @@
 				}
 			}
 
-			if (checkWin()) {
+			# check win conditions every time a move is played
+			# end the game if a player has won or there is a tie
+			if (checkBoardWin() or checkBoardTie()) {
 				endGame();
-			} else {
-				if (isBoardFull()) {
-					tie = true;
-					endGame();
-				}
-			}
+			} 
 		}
 
+		# player resigns
 		public function resign($playerResigned) {
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
 			$loser = $playerResigned;
 			$winner = ($player1 != $playerResigned ? $player1 : $player2); 
 			endGame();
 		}
 
-		public function tie($playerAskingForTie) {
+		# player raises a tie flag
+		# if both players raise a tie flag, the game is tied
+		public function raiseTieFlag($playerAskingForTie) {
+			if (!gameAlive) {
+				throw new GameExistenceException(1);
+			}
 			if ($playerAskingForTie == $player1) {
 				$player1TieFlag = true;
 			} else {
@@ -125,39 +187,11 @@
 			}
 		}
 
-
-		public function getTie() const {
-			return $tie;
-		}
-
-		public function getWinner() const {
-			return $winner;
-		}
-
-		public function getLoser() const {
-			return $loser;
-		}
-
-		public function getGameAlive() const {
-			return $gameAlive;
-		}
-
-		public function getBoard() const {
-			return $board;
-		}
-
-		public function getLeaderboard() const {
-			return $leaderboard;
-		}
-
-		public function getNumberOfTurns() const {
-			return $numberOfTurns;
-		}
-		
+		# end the game
 		private function endGame() {
 			$gameAlive = false;
 
-			if (!tie) {
+			if (!$tie) {
 				# record game results in leaderboard
 				if (in_array($winner, $leaderboard)) {
 					$leaderboard[$winner]['wins'] += 1;
@@ -183,7 +217,9 @@
 			} 
 		}
 
-		private function checkWin($move, $lastPlayer) {
+		# check the board for a win condition
+		# set the board state to win if a win is found
+		private function checkBoardWin($move, $lastPlayer) {
 			# determine whether a player wins by checking the sum of a 
 			# row, column, and diagonal AFFECTED by the last move
 
@@ -200,7 +236,7 @@
 				$rowSum += $board[$i];
 			}
 			if ($rowSum == $playerWinSum) {
-				$winningMethod['row'] = $row;
+				$winData['row'] = $row;
 				$winner = $lastPlayer;
 			}
 
@@ -212,7 +248,7 @@
 				$columnSum += $board[$i];
 			}
 			if ($columnSum == $playerWinSum) {
-				$winningMethod['column'] = $column;
+				$winData['column'] = $column;
 				$winner = $lastPlayer;
 			}
 
@@ -230,15 +266,14 @@
 					$diagonalRLSum += $board[$displacementRL + $displacementRL * $i]
 				}
 				if ($diagonalLRSum == $playerWinSum) {
-					$winningMethod['diagonalLR'] = $displacementLR;
+					$winData['diagonalLR'] = $displacementLR;
 					$winner = $lastPlayer;
 				} 
 				if ($diagonalRLSum == $playerWinSum) {
-					$winningMethod['diagonalRL'] = $displacementRL;
+					$winData['diagonalRL'] = $displacementRL;
 					$winner = $lastPlayer;
 				} 
 			}
-
 
 			if ($winner != '') {
 				$loser = ($player1 == $winner ? $player2 : $player1); 
@@ -247,15 +282,14 @@
 			return false;
  		}
 
- 		private function isBoardFull() {
+		# check the board for a tie condition
+		# set the board state to tied if a tie is found
+ 		private function checkBoardTie() {
  			if ($numberOfTurns == $boardLength * $boardLength) {
+ 				tie = true;
  				return true;
  			}
  			return false;
  		}
-
 	}
-
-
-
 ?>

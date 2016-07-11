@@ -1,40 +1,55 @@
 <?php
-
-	require_once('controller/GameController.php'); 
+	require_once('app/model/Game.php');
+	require_once('app/controller/GameController.php'); 
 
 	# load configuration settings from file
-	$configs = include('resources/server-config.php');
+	$configs = include('server-config.php');
 
-
-	# extract values from slash command
-	$token = $_POST['token'];
-
-	$team_id = $_POST['team_id'];
-	$channel_id = $_POST['channel_id'];
-
-	$user_id = $_POST['user_id'];
-	$user_name = $_POST['user_name'];
-
-	$text = $_POST['text'];
-
-
-	
-	if ($token != $configs['token']) { 
-		# exit if request token does not match the configured token
+	if (!(isset($_POST['token']) and isset($_POST['user_name']) and isset($_POST['text']) and isset($_POST['response_url']))) {
+		# invalid form data
+		$reply = $configs['invalidFormMessage'];
+		echo $reply;
+	} else if ($_POST['token'] != $configs['token']) {
+		# token mismatch
 		$reply = $configs['tokenMismatchMessage'];
+		echo $reply;
 	} else {
-		# create a new game controller and pass the user command to it
-		$gameController = new GameController;
-		try {
-			$reply = $gameController->command($text);
-		} catch(Exception $e) {
-			$reply = $e->__toString();
+		# load previous game model state information
+		$state = file_get_contents('app/resources/' + configs['gameSaveName']);
+		if (!$state) {
+			# create a new game model if no state exists
+			$game = new Game;
+		} else {
+			# load state from file
+			$game = unserialize($state);
 		}
+
+		# create a new game controller and pass the game model to it
+		$gameController = new GameController($game);
+
+		try {
+			# pass the user command to the controller
+			$reply = $gameController->command($text);
+
+			# save game state
+			$state = serialize($game);
+			file_put_contents('app/resources/' + configs['gameSaveName'], $state);
+		} catch(Exception $e) {
+			$reply = array($e->__toString();
+		}
+
+		$responseJSON = json_encode($reply);
+		$userAgent = 'Tic-Tac-Toe/1.0';
+
+		$ch = curl_init($_POST['response_url']);
+		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $responseJSON);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($responseJSON))
+		);
+		curl_exec($ch);
 	}
-
-	# relay response
-	echo $reply;
-
 ?>
 
 
