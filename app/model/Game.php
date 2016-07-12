@@ -88,12 +88,13 @@
  		# create a new game
 		public function newGame($boardLength, $player1, $player2) {
 			# throws an exception if a game already exists
+			# yes, you can play a game vs. yourself
 			if (gameAlive) {
 				throw new GameExistenceException(0);
 			}
 
 			# throws an exception if the board specifications are invalid
-			if (!($boardLength >= 3 and $boardLength <= 99 and $boardLength % 2 == 1)) {
+			if (!($boardLength >= 3 and $boardLength <= 99 and $boardLength % 2 == 1 )) {
 				throw new BoardException($boardLength);
 			}
 
@@ -132,7 +133,7 @@
 			# throws an exception if a game doesn't exists
 			if (!gameAlive) {
 				throw new GameExistenceException(1);
-			}
+			} 
 
 			if ($player != $currentPlayer) {
 				if ($player != $player1 and $player != $player2) {
@@ -141,6 +142,9 @@
 					throw new WrongTurnException($player, $currentPlayer);
 				}
 			} else {
+				if ($move < 0 or $move >= count($board) or $board[$move] != 0) {
+					throw new WrongMoveException($move);
+				}
 				$numberOfTurns += 1;
 				if ($player == $player1) {
 					# insert 'X', represented as 1, at position $move
@@ -164,7 +168,9 @@
 		public function resign($playerResigned) {
 			if (!gameAlive) {
 				throw new GameExistenceException(1);
-			}
+			} else if ($playerResigned != $player1 and $playerResigned != $player2) {
+				throw new PlayerNotInGameException($playerResigned);
+			} 
 			$loser = $playerResigned;
 			$winner = ($player1 != $playerResigned ? $player1 : $player2); 
 			endGame();
@@ -175,7 +181,9 @@
 		public function raiseTieFlag($playerAskingForTie) {
 			if (!gameAlive) {
 				throw new GameExistenceException(1);
-			}
+			} else if ($playerResigned != $player1 and $playerResigned != $player2) {
+				throw new PlayerNotInGameException($playerResigned);
+			} 
 			if ($playerAskingForTie == $player1) {
 				$player1TieFlag = true;
 			} else {

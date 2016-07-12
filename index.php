@@ -5,14 +5,10 @@
 	# load configuration settings from file
 	$configs = include('server-config.php');
 
-	if (!(isset($_POST['token']) and isset($_POST['user_name']) and isset($_POST['text']) and isset($_POST['response_url']))) {
-		# invalid form data
-		$reply = $configs['invalidFormMessage'];
-		echo $reply;
-	} else if ($_POST['token'] != $configs['token']) {
-		# token mismatch
-		$reply = $configs['tokenMismatchMessage'];
-		echo $reply;
+	if (!(isset($_POST['token']) or $_POST['token'] != $configs['token']) {
+		# token does not exist or mismatch -- wrong team configuration or unknown client
+		$response = $configs['tokenMismatchMessage'];
+		echo $response;
 	} else {
 		# load previous game model state information
 		$state = file_get_contents('app/resources/' + configs['gameSaveName']);
@@ -27,18 +23,14 @@
 		# create a new game controller and pass the game model to it
 		$gameController = new GameController($game);
 
-		try {
-			# pass the user command to the controller
-			$reply = $gameController->command($text);
+		# pass the user command to the controller
+		$response = $gameController->command($_POST['text'], $_POST['user_name']);
 
-			# save game state
-			$state = serialize($game);
-			file_put_contents('app/resources/' + configs['gameSaveName'], $state);
-		} catch(Exception $e) {
-			$reply = array($e->__toString();
-		}
-
-		$responseJSON = json_encode($reply);
+		# save game state
+		$state = serialize($game);
+		file_put_contents('app/resources/' + configs['gameSaveName'], $state);
+		
+		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
 
 		$ch = curl_init($_POST['response_url']);

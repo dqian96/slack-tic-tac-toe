@@ -101,4 +101,28 @@
 	    	return $error;
 	    }
 	}
+
+	# exception class for when a wrong move is played
+	# i.e. already played or out of range of board
+	class WrongMoveException extends Exception {
+		const private $configs;
+		const private $move;
+
+		# getter for wrong move
+	    public function getMove() {
+	    	return $move;
+	    }
+
+	    public function __construct($move, $code = 0, Exception $previous = null) {
+	    	$configs = include('../resources/game-config.php');
+	    	$this->move = $move;
+	   		parent::__construct($configs['wrongMoveExceptionMessage', $code, $previous);
+	    }
+
+	    # format an user-friendly error 
+	    public function __toString() {
+	    	$error = $message . ' The move was: '. $move . '.';
+	    	return $error;
+	    }
+	}
 ?>
