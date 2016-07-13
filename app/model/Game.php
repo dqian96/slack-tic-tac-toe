@@ -83,9 +83,6 @@
 			if ($this->neverPlayed) {
 				throw new GameNeverPlayed;
 			}
-			else if ($this->gameAlive) {
-				throw new GameExistenceException(0);
-			}
 			return $this->winData;
 		}
 
@@ -121,7 +118,6 @@
 		}
 
 		public function getBoard() {
-			echo $this->neverPlayed;
 			if ($this->neverPlayed) {
 				throw new GameNeverPlayed;
 			}
@@ -143,9 +139,10 @@
  		# create a new game
 		public function newGame($boardLength, $player1, $player2) {
 			# throws an exception if a game already exists
-			# yes, you can play a game vs. yourself
 			if ($this->gameAlive) {
 				throw new GameExistenceException(0);
+			} else if ($player1 == $player2) {
+				throw new SamePlayerException;
 			}
 
 			# throws an exception if the board specifications are invalid
@@ -204,18 +201,18 @@
 				if ($player == $this->player1) {
 					# insert 'X', represented as 1, at position $move
 					$this->board[$move] = 1;
-					$this->currentPlayer == $this->player2;
+					$this->currentPlayer = $this->player2;
 				} else {
 					# insert 'O', represented as -1, at position $move
 					$this->board[$move] = -1;
-					$this->currentPlayer == $this->player1;
+					$this->currentPlayer = $this->player1;
 				}
 			}
 
 			# check win conditions every time a move is played
 			# end the game if a player has won or there is a tie
-			if (checkBoardWin() or checkBoardTie()) {
-				endGame();
+			if ($this->checkBoardWin($move, $player) or $this->checkBoardTie()) {
+				$this->endGame();
 			} 
 		}
 
@@ -228,7 +225,7 @@
 			} 
 			$this->loser = $playerResigned;
 			$this->winner = ($this->player1 != $playerResigned ? $this->player1 : $this->player2); 
-			endGame();
+			$this->endGame();
 		}
 
 		# player raises a tie flag
@@ -246,7 +243,7 @@
 			}
 			if ($this->player1TieFlag and $this->player2TieFlag) {
 				$this->tie = true;
-				endGame();
+				$this->endGame();
 			}
 		}
 
@@ -256,18 +253,18 @@
 
 			if (!$this->tie) {
 				# record game results in leaderboard
-				if (in_array($this->winner, $this->leaderboard)) {
+				if (array_key_exists($this->winner, $this->leaderboard)) {
 					$this->leaderboard[$this->winner]['wins'] += 1;
-					$this->leaderboard[$this->winner]['W\L'] += $this->leaderboard[$this->winner]['wins']*1.0/max(1, $this->leaderboard[$this->winner]['losses']);
+					$this->leaderboard[$this->winner]['W\L'] += $this->leaderboard[$this->winner]['wins']/max(1, $this->leaderboard[$this->winner]['losses']);
 				} else {
 					$this->leaderboard[$this->winner]['wins'] = 1;
 					$this->leaderboard[$this->winner]['losses'] = 0;
 					$this->leaderboard[$this->winner]['W\L'] = 1;
 				}
 
-				if (in_array($this->loser, $this->leaderboard)) {
+				if (array_key_exists($this->loser, $this->leaderboard)) {
 					$this->leaderboard[$this->loser]['losses'] += 1;
-					$this->leaderboard[$this->loser]['W\L'] += $this->leaderboard[$this->loser]['wins']*1.0/max(1, $this->leaderboard[$this->loser]['losses']);
+					$this->leaderboard[$this->loser]['W\L'] += $this->leaderboard[$this->loser]['wins']/max(1, $this->leaderboard[$this->loser]['losses']);
 				} else {
 					$this->leaderboard[$this->loser]['wins'] = 0;
 					$this->leaderboard[$this->loser]['losses'] = 1;
@@ -275,7 +272,7 @@
 				}	
 
 				uasort($this->leaderboard, function($a, $b) {
-				    return $a['W\L'] > $b['W\L'];
+				    return $a['W\L'] < $b['W\L'];
 				});			
 			} 
 		}
@@ -286,10 +283,10 @@
 			# determine whether a player wins by checking the sum of a 
 			# row, column, and diagonal AFFECTED by the last move
 
-			$playerWinSum = ($lastPlayer == $this->player1 ? $this->$boardLength : -1 * $this->$boardLength);
+			$playerWinSum = ($lastPlayer == $this->player1 ? $this->boardLength : -1 * $this->boardLength);
 
 			# check row win condition
-			$row = $move / $this->boardLength;
+			$row = floor($move / $this->boardLength);
 			$rowStartIndex = $row * $this->boardLength;
 			$rowSum = 0;
 			for ($i = $rowStartIndex; $i < $rowStartIndex + $this->boardLength; $i++) {
@@ -304,7 +301,7 @@
 			$column = $move % $this->boardLength;
 			$columnStartIndex = $column;
 			$columnSum = 0;
-			for ($i = $columnStartIndex; $i < $columnSum + $this->boardLength * $this->this->boardLength; $i += 3) {
+			for ($i = $columnStartIndex; $i < $columnStartIndex + $this->boardLength * $this->boardLength; $i += $this->boardLength) {
 				$columnSum += $this->board[$i];
 			}
 			if ($columnSum == $playerWinSum) {
@@ -337,7 +334,7 @@
 
 			if ($this->winner != '') {
 				# return true if a winner is found
-				$loser = ($this->player1 == $this->winner ? $this->player2 : $this->player1); 
+				$this->loser = ($this->player1 == $this->winner ? $this->player2 : $this->player1); 
 				return true;
 			}
 			return false;

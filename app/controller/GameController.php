@@ -28,8 +28,9 @@
 		   			switch ($action[0]) {
 		   				# command to fetch game board
 		   				case 'board':
+		   					$boardImageData = $this->getBoardImageData();
 		   					$response['attachments'] = array();
-		   					array_push($response['attachments'], $this->getBoardImageData());
+		   					array_push($response['attachments'], $boardImageData);
 		   					break;
 		   				# command to fetch leaderboard
 		   				case 'leaderboard':
@@ -39,13 +40,14 @@
 		   					} else {
 		   						$response['text'] = '';
 		   						$rank = 1;
-			   					foreach ($leaderboard as $player => $score)
-		    						$response['text'] += $player . ' is the ' . $rank . 'st player with ' . $score['wins'] . ' and ' . $score['losses'] . ', having a W\L ratio of ' . $score['W\L'] . '!\n';
+			   					foreach ($leaderboard as $player => $score) {
+		    						$response['text'] .= $player . ' is the number ' . $rank . ' player with ' . $score['wins'] . ' wins and ' . $score['losses'] . ' losses, and having a W\L ratio of ' . $score['W\L'] . '!\n';
 		    						$rank += 1;
 		    						if ($rank == 5) {
 		    							break;
 		    						}
 			   					}
+			   				}
 		   					break;
 		   				# command to fetch help menu
 		   				case 'help':
@@ -57,7 +59,7 @@
 		   					$this->game->resign($username);
 		   					$winner = $this->game->getWinner();
 		   					$loser = $this->game->getLoser();
-		   					$response['text'] = $loser . ' has resigned. ' . $winner . 'has won!';
+		   					$response['text'] = $loser . ' has resigned. ' . $winner . ' has won!';
 		   					break;
 		   				# command to raise a tie flag
 		   				case 'tie':
@@ -81,7 +83,7 @@
 		   						throw new SyntaxException($text);	
 		   					}
 		   					$this->game->newGame($action[2], $username, $action[1]);
-		   					$response['text'] = 'Game started between ' . $username . ' (X) and ' . $action[1] . ' (O)!';
+		   					$response['text'] = 'Game started between ' . $username . ' (X) and ' . $action[1] . ' (O)! ' . $username . ' goes first!' ;
 		   					break;
 		   				# command to play a move
 		   				case 'move':
@@ -94,14 +96,14 @@
 
 		   					if (!$this->game->getGameAlive()) {
 		   						if ($this->game->wasTied()) {
-		   							$response['text'] += '\n This resulted in a tie game!';
+		   							$response['text'] .= '\nThis resulted in a tie game!';
 		   						} else {
-		   							$response['text'] += '\n This resulted in ' . $this->game->getWinner() . 'winning the game!';
+		   							$response['text'] .= '\nThis resulted in ' . $this->game->getWinner() . ' winning the game!';
 		   						}
 		   					}
-
+		   					$boardImageData = $this->getBoardImageData();
 		   					$response['attachments'] = array();
-		   					array_push($response['attachments'], $this->getBoardImageData());
+		   					array_push($response['attachments'], $boardImageData);
 		   					break;
 		   				default:
 		   					throw new SyntaxException($text);	
@@ -120,7 +122,7 @@
 			$boardLength = $this->game->getBoardLength();
 			$winData = $this->game->getWinData();
 			$boardImage = new GameBoardImage($boardLength, $board, $winData);
-			$boardImageURL = $_SERVER['SERVER_NAME'] . '/' . $boardImage->outputImage();
+			$boardImageURL = $boardImage->outputImage();
 
 			$numTurn = $this->game->getNumberOfTurns();
 

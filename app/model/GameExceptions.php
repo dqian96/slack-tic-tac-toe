@@ -71,7 +71,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . '\n' . 'It is not ' . $this->wrongPlayer . '\'s turn to play... ' . $this->playerWithTurnRight . 'must play.';
+	    	$error = $this->message . '\n' . 'It is not ' . $this->wrongPlayer . '\'s turn to play... ' . $this->playerWithTurnRight . ' must play.';
 	    	return $error;
 	    }
 	}
@@ -116,7 +116,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . ' The move was: '. $move . '.';
+	    	$error = $this->message . ' The move was: '. $this->move . '.';
 	    	return $error;
 	    }
 	}
@@ -125,7 +125,21 @@
 	class GameNeverPlayed extends Exception {
 	    public function __construct($code = 0, Exception $previous = null) {
 	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
-	   		parent::__construct($configs['gameNeverPlayedException'], $code, $previous);
+	   		parent::__construct($configs['gameNeverPlayedExceptionMessage'], $code, $previous);
+	    }
+
+	    # format an user-friendly error 
+	    public function __toString() {
+	    	$error = $this->message;
+	    	return $error;
+	    }
+	}
+
+	# exception class for when an user attempts to play a game with himself
+	class SamePlayerException extends Exception {
+	    public function __construct($code = 0, Exception $previous = null) {
+	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	   		parent::__construct($configs['samePlayerExceptionMessage'], $code, $previous);
 	    }
 
 	    # format an user-friendly error 

@@ -12,7 +12,9 @@
 
 	    'wrongMoveExceptionMessage' => 'The move played was invalid. Please check that the move is not played already and it is in valid range of the board.',
 
-	    'gameNeverPlayedException' => 'No game was ever played before.',
+	    'gameNeverPlayedExceptionMessage' => 'No game was ever played before.',
+
+	    'samePlayerExceptionMessage' => 'You cannot play a game with yourself...',
 	    
 	    'boardImageName' => 'board-42e3b0e44347b0c3b5c3723c3b2e721c.png',
 
