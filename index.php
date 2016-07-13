@@ -29,13 +29,11 @@
 		$state = serialize($game);
 		file_put_contents('app/data/' . $configs['gameSaveName'], $state);
 		
+		$response['response_type'] = 'in_channel';
+
 		# send response using cURL
 		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
-
-		// TESTING
-		echo $responseJSON;
-		exit();
 
 
 		$ch = curl_init($_POST['response_url']);

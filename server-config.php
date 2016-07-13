@@ -1,6 +1,6 @@
 <?php
 	return array(
-	    'token' => '1',
+	    'token' => 'nYWqtOKjNsDxfMbPZY3otS5s',
 
 	    'tokenMismatchMessage' => 'Token does not exist or token sent does not match this server\'s configuration.',
 	    
