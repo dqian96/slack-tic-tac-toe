@@ -10,8 +10,8 @@
 		echo $response;
 	} else {
 		# load previous game model state information
-		if (file_exists('app/data/' . $configs['gameSaveName'])) {
-			$state = file_get_contents('app/data/' . $configs['gameSaveName']);
+		if (file_exists('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName'])) {
+			$state = file_get_contents('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName']);
 			# load state from file
 			$game = unserialize($state);
 		} else {
@@ -27,10 +27,11 @@
 
 		# save game state
 		$state = serialize($game);
-		file_put_contents('app/data/' . $configs['gameSaveName'], $state);
+		file_put_contents('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName'], $state);
 		
 		$response['response_type'] = 'in_channel';
 		$response['unfurl_links'] = true;
+
 		# send response using cURL
 		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
@@ -40,8 +41,10 @@
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $responseJSON);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
-			'Content-Length: ' . strlen($responseJSON))
+			'Content-Length: ' . strlen($responseJSON)),
+			'Status': 200
 		);
 		curl_exec($ch);
+		curl_close($ch);
 	}
 ?>

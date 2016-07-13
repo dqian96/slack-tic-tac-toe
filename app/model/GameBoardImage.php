@@ -28,8 +28,9 @@
 		# create an image from the image resources and return the path
 		public function outputImage() {
 			//header('Content-Type: image/png');
-			$savePath = __DIR__ . '/../../public/images/' . $this->configs['boardImageName'];
-			$publicPath = 'https://' . $_SERVER['SERVER_NAME'] . '/public/images/' . $this->configs['boardImageName'];
+			$uniqueId = uniqid();
+			$savePath = __DIR__ . '/../../public/images/' . $uniqueId . '-' . $this->configs['boardImageName'];
+			$publicPath = 'https://' . $_SERVER['SERVER_NAME'] . '/public/images/' . $uniqueId . '-' . $this->configs['boardImageName'];
 			imagepng($this->boardResource, $savePath);
 			return $publicPath;
 		}
