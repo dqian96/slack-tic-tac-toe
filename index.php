@@ -30,7 +30,7 @@
 		file_put_contents('app/data/' . $configs['gameSaveName'], $state);
 		
 		$response['response_type'] = 'in_channel';
-
+		$response['unfurl_links'] = true;
 		# send response using cURL
 		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
