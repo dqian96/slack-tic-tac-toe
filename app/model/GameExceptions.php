@@ -17,7 +17,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . '\n' . 'The board length that was entered is: ' . $this->boardLength;
+	    	$error = $this->message . "\nThe board length that was entered is: " . $this->boardLength;
 	    	return $error;
 	    }
 	}
@@ -41,7 +41,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . '\n' . 'The player who tried to make a move was: ' . $this->playerNotInGame;
+	    	$error = $this->message . "\nThe player who tried to make a move was: " . $this->playerNotInGame;
 	    	return $error;
 	    }
 	}
@@ -71,7 +71,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . '\n' . 'It is not ' . $this->wrongPlayer . '\'s turn to play... ' . $this->playerWithTurnRight . ' must play.';
+	    	$error = $this->message . "\nIt is not " . $this->wrongPlayer . '\'s turn to play... ' . $this->playerWithTurnRight . ' must play.';
 	    	return $error;
 	    }
 	}
@@ -116,7 +116,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . ' The move was: '. $this->move . '.';
+	    	$error = $this->message . "\nThe move was: " . $this->move . '.';
 	    	return $error;
 	    }
 	}

@@ -17,7 +17,7 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $this->message . '\nThe command was: ' . $this->command;
+	    	$error = $this->message . "\nThe command was: " . $this->command;
 	    	return $error;
 	    }
 	}

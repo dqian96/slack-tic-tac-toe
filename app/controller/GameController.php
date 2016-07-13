@@ -43,7 +43,7 @@
 		   						$response['text'] = '';
 		   						$rank = 1;
 			   					foreach ($leaderboard as $player => $score) {
-		    						$response['text'] .= $player . ' is the number ' . $rank . ' player with ' . $score['wins'] . ' win(s) and ' . $score['losses'] . ' loss(es), and having a W\L ratio of ' . $score['W\L'] . '!\n';
+		    						$response['text'] .= $player . ' is the number ' . $rank . ' player with ' . $score['wins'] . ' win(s) and ' . $score['losses'] . ' loss(es), and having a W\L ratio of ' . $score['W\L'] . "!\n";
 		    						$rank += 1;
 		    						if ($rank == 5) {
 		    							break;
@@ -106,9 +106,9 @@
 
 		   					if (!$this->game->getGameAlive()) {
 		   						if ($this->game->wasTied()) {
-		   							$response['text'] .= '\nThis resulted in a tie game!';
+		   							$response['text'] .= "\nThis resulted in a tie game!";
 		   						} else {
-		   							$response['text'] .= '\nThis resulted in ' . $this->game->getWinner() . ' winning the game!';
+		   							$response['text'] .= "\nThis resulted in " . $this->game->getWinner() . ' winning the game!';
 		   						}
 		   					}
 		   					$boardImageData = $this->getBoardImageData();

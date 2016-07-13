@@ -1,6 +1,6 @@
 <?php
 	return array(
-	    'boardExceptionMessage' => 'The board size is out of the allowed range.\n Please choose an odd board length in the range [3,49]. ',
+	    'boardExceptionMessage' => "The board size is out of the allowed range.\n Please choose an odd board length in the range [3,49].",
 	    
 	    'playerNotInGameExceptionMessage' => 'Players in the game cannot make a move, but can look at the board and leaderboard.',
 	    
@@ -10,7 +10,7 @@
 	   
 	    'gameDoesExistExceptionMessage' => 'A game is currently in-progress.',
 
-	    'wrongMoveExceptionMessage' => 'The move played was invalid. Please check that the move is not played already and it is in valid range of the board.',
+	    'wrongMoveExceptionMessage' => "The move played was invalid.\nPlease check that the move is not played already and it is in valid range of the board.",
 
 	    'gameNeverPlayedExceptionMessage' => 'No game was ever played before.',
 
