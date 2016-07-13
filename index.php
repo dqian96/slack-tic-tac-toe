@@ -28,10 +28,11 @@
 
 		# save game state
 		$state = serialize($game);
-		file_put_contents('app/data/' . $gameStateForChannelFileName);
+		file_put_contents('app/data/' . $gameStateForChannelFileName, $state);
 		
 		# send response using cURL
 		$responseJSON = json_encode($response, JSON_UNESCAPED_SLASHES);
+
 		$userAgent = 'Tic-Tac-Toe/1.0';
 
 		$ch = curl_init($_POST['response_url']);
