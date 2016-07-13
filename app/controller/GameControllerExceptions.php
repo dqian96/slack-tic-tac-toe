@@ -2,12 +2,11 @@
 	# exception class for user command syntax error
 	class SyntaxException extends Exception {
 		private $command;
-		private $configs;
 
 		# mandatory message and (invalid) command
 	    public function __construct($command, $code = 0, Exception $previous = null) {
-	    	$this->configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/controller-config.php');
-	   		parent::__construct($this->configs['syntaxExceptionMessage'], $code, $previous);
+	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/controller-config.php');
+	   		parent::__construct($configs['syntaxExceptionMessage'], $code, $previous);
 	   		$this->command = $command;
 	    }
 

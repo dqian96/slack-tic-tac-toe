@@ -5,7 +5,7 @@
 		private $configs;
 
 		public function __construct($boardLength, $moves, $winData) {
-			$this->configs = include('../resources/game-config.php');
+			$this->configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
 			$squareLength = $this->configs['squareLength'];
 			# create a new image resource
 			$this->boardResource = imagecreatetruecolor($boardLength * $squareLength, $boardLength * $squareLength);
@@ -19,16 +19,16 @@
 			imagefill($this->boardResource, 0, 0, $white);
 
 			# draw the game grid with black
-			drawGrid($squareLength, $black);
+			$this->drawGrid($squareLength, $black);
 
 			# draw the moves, using green for winning moves
-			drawMoves($squareLength, $moves, $winData);
+			$this->drawMoves($squareLength, $moves, $winData, $green, $black);
 		}
 
 		# create an image from the image resources and return the path
 		public function outputImage() {
-			header('Content-Type: image/png');
-			$outputPath = $_SERVER['DOCUMENT_ROOT'] + 'public/images/' . $this->configs['boardImageName'];
+			//header('Content-Type: image/png');
+			$outputPath = $_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/public/images/' . $this->configs['boardImageName'];
 			imagepng($this->boardResource, $outputPath);
 			return $outputPath;
 		}
@@ -40,8 +40,8 @@
 			for ($i = $squareLength; $i < imagesx($this->boardResource); $i += $squareLength) {
 				$point1[0] = $i;
 				$point2[0] = $i;
-				imageline($this->boardResource, point1[0], point1[1], point2[0], point2[1], $color);
-				imageline($this->boardResource, point1[1], point1[0], point2[1], point2[0], $color);
+				imageline($this->boardResource, $point1[0], $point1[1], $point2[0], $point2[1], $color);
+				imageline($this->boardResource, $point1[1], $point1[0], $point2[1], $point2[0], $color);
 			}
 		}
 
@@ -103,12 +103,12 @@
 			# draw the L-R line
 			$point1 = array( $center[0] - $markerLength/2, $center[1] - $markerLength/2);
 			$point2 = array( $center[0] + $markerLength/2, $center[1] + $markerLength/2);		
-			imageline($this->boardResource, point1[0], point1[1], point2[0], point2[1], $color);
+			imageline($this->boardResource, $point1[0], $point1[1], $point2[0], $point2[1], $color);
 
 			# draw the R-L line
 			$point1 = array( $center[0] - $markerLength/2, $center[1] + $markerLength/2);
 			$point2 = array( $center[0] + $markerLength/2, $center[1] - $markerLength/2);		
-			imageline($this->boardResource, point1[0], point1[1], point2[0], point2[1], $color);
+			imageline($this->boardResource, $point1[0], $point1[1], $point2[0], $point2[1], $color);
 		}
 	}
 ?>

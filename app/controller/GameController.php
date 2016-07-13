@@ -62,7 +62,7 @@
 		   				# command to raise a tie flag
 		   				case 'tie':
 		   					$this->game->raiseTieFlag($username);
-		   					if ($this->game->isTied()) {
+		   					if (!$this->game->getGameAlive()) {
 		   						$response['text'] = 'Game tied!';
 		   					} else {
 		   						$response['text'] = $username . ' raised a tie flag!';
@@ -93,7 +93,7 @@
 		   					$response['text'] = $username . ' has made a play at position ' . $action[1] . '!';
 
 		   					if (!$this->game->getGameAlive()) {
-		   						if ($this->game->isTied()) {
+		   						if ($this->game->wasTied()) {
 		   							$response['text'] += '\n This resulted in a tie game!';
 		   						} else {
 		   							$response['text'] += '\n This resulted in ' . $this->game->getWinner() . 'winning the game!';
