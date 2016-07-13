@@ -4,7 +4,7 @@
 		private $boardResource;
 		private $configs;
 
-		public function __construct($boardLength, $moves, $winData) {
+		public function __construct($boardLength, $moves, $boardWinPatterns) {
 			$this->configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
 			$squareLength = $this->configs['squareLength'];
 			# create a new image resource
@@ -22,7 +22,7 @@
 			$this->drawGrid($squareLength, $black);
 
 			# draw the moves, using green for winning moves
-			$this->drawMoves($squareLength, $moves, $winData, $green, $black, $boardLength);
+			$this->drawMoves($squareLength, $moves, $boardWinPatterns, $green, $black, $boardLength);
 		}
 
 		# create an image from the image resources and return the path
@@ -47,7 +47,7 @@
 		}
 
 		# draw the moves played on the board
-		private function drawMoves($squareLength, $moves, $winData, $winningColor, $normalColor, $boardLength) {
+		private function drawMoves($squareLength, $moves, $boardWinPatterns, $winningColor, $normalColor, $boardLength) {
 			# Fill x% of the square width and length with an X or O
 			# For example, if it is 0.8, then there'll be a 10% margin of all sides
 			$percentLengthFill = 0.8;
@@ -56,7 +56,7 @@
 			for ($position = 0; $position < count($moves); $position++) {
 			 	if ($moves[$position] != 0) {
 			 		$center = $this->findSquareCenter($position, $squareLength, $boardLength);
-			 		$color = ($this->isWinningMove($position, $boardLength, $winData) ? $winningColor : $normalColor);
+			 		$color = ($this->isWinningMove($position, $boardLength, $boardWinPatterns) ? $winningColor : $normalColor);
 			 		if ($moves[$position] == -1) {
 			 			# draw a circle at coordinate center
 			 			imageellipse ($this->boardResource , $center[0] , $center[1] , $markerLength, $markerLength , $color);
@@ -82,15 +82,21 @@
 		}
 
 		# determine if a move/position is a winning move
-		private function isWinningMove($position, $boardLength, $winData) {
+		private function isWinningMove($position, $boardLength, $boardWinPatterns) {
 			$row = floor($position / $boardLength);
 			$column = $position % $boardLength;
+			# determine if a position is a member of the set of winning moves
+			# i.e. check if the position is on the winning row, column, or diagonals
 			if 
 				(
-				$row == $winData['row'] or 
-				$column == $winData['column'] or
-				($winData['diagonalLR'] != -1 and $position % $winData['diagonalLR'] == 0) or 
-				($winData['diagonalRL'] != -1 and $position - % $winData['diagonalRL'] == 0 and $position != 0) 
+				$row == $boardWinPatterns['row'] || 
+				$column == $boardWinPatterns['column'] ||
+				# every position that is a multiple of diagonalLR = board length + 1
+				# is on the L-R diagonal
+				($boardWinPatterns['diagonalLR'] != -1 && $position % $boardWinPatterns['diagonalLR'] == 0) || 
+				# every position that is a multiple of diagonalRL = board length - 1
+				# EXCEPT positions 0 and boardlength^2 - 1 is on the R-L diagonal
+				($boardWinPatterns['diagonalRL'] != -1 && $position % $boardWinPatterns['diagonalRL'] == 0 && $position != 0 && $position != $boardLength * $boardLength  - 1) 
 				) 
 			{
 				return true;

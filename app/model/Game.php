@@ -22,8 +22,8 @@
 		private $loser;
 		private $tie;
 
-		# winData is an array containing the winning rows, columns, diagonals
-		private $winData;
+		# boardWinPatterns is an array containing the winning rows, columns, diagonals
+		private $boardWinPatterns;
 
 		# array of 0,-1,1 modelling the game board
 		# player 1 (X): 1
@@ -59,7 +59,7 @@
 			$this->loser = '';
 			$this->tie = false;
 
-			$this->winData = array(
+			$this->boardWinPatterns = array(
 				'row' => -1,
 				'column' => -1,
 				'diagonalLR' => -1,
@@ -79,11 +79,11 @@
 			return $this->tie;
 		}
 		
-		public function getWinData() {
+		public function getBoardWinPatterns() {
 			if ($this->neverPlayed) {
 				throw new GameNeverPlayed;
 			}
-			return $this->winData;
+			return $this->boardWinPatterns;
 		}
 
 		public function getWinner() {
@@ -146,7 +146,7 @@
 			}
 
 			# throws an exception if the board specifications are invalid
-			if (!($boardLength >= 3 and $boardLength <= 49 and $boardLength % 2 == 1 )) {
+			if (!($boardLength >= 3 && $boardLength <= 49 && $boardLength % 2 == 1 )) {
 				throw new BoardException($boardLength);
 			}
 
@@ -169,7 +169,7 @@
 			$this->tie = false;
 			$this->winner = '';
 			$this->loser = '';
-			$this->winData = array(
+			$this->boardWinPatterns = array(
 				'row' => -1,
 				'column' => -1,
 				'diagonalLR' => -1,
@@ -188,13 +188,13 @@
 			} 
 
 			if ($player != $this->currentPlayer) {
-				if ($player != $this->player1 and $player != $this->player2) {
+				if ($player != $this->player1 && $player != $this->player2) {
 					throw new PlayerNotInGameException($player);
 				} else {
 					throw new WrongTurnException($player, $this->currentPlayer);
 				}
 			} else {
-				if ($move < 0 or $move >= count($this->board) or $this->board[$move] != 0) {
+				if ($move < 0 || $move >= count($this->board) || $this->board[$move] != 0) {
 					throw new WrongMoveException($move);
 				}
 				$this->numberOfTurns += 1;
@@ -211,7 +211,7 @@
 
 			# check win conditions every time a move is played
 			# end the game if a player has won or there is a tie
-			if ($this->checkBoardWin($move, $player) or $this->checkBoardTie()) {
+			if ($this->checkBoardWin($move, $player) || $this->checkBoardTie()) {
 				$this->endGame();
 			} 
 		}
@@ -220,7 +220,7 @@
 		public function resign($playerResigned) {
 			if (!$this->gameAlive) {
 				throw new GameExistenceException(1);
-			} else if ($playerResigned != $this->player1 and $playerResigned != $this->player2) {
+			} else if ($playerResigned != $this->player1 && $playerResigned != $this->player2) {
 				throw new PlayerNotInGameException($playerResigned);
 			} 
 			$this->loser = $playerResigned;
@@ -233,7 +233,7 @@
 		public function raiseTieFlag($playerAskingForTie) {
 			if (!$this->gameAlive) {
 				throw new GameExistenceException(1);
-			} else if ($playerAskingForTie != $this->player1 and $this->playerAskingForTie != $player2) {
+			} else if ($playerAskingForTie != $this->player1 && $playerAskingForTie != $this->player2) {
 				throw new PlayerNotInGameException($playerAskingForTie);
 			} 
 			if ($playerAskingForTie == $this->player1) {
@@ -241,7 +241,7 @@
 			} else {
 				$this->player2TieFlag = true;
 			}
-			if ($this->player1TieFlag and $this->player2TieFlag) {
+			if ($this->player1TieFlag && $this->player2TieFlag) {
 				$this->tie = true;
 				$this->endGame();
 			}
@@ -250,12 +250,11 @@
 		# end the game
 		private function endGame() {
 			$this->gameAlive = false;
-
 			if (!$this->tie) {
 				# record game results in leaderboard
 				if (array_key_exists($this->winner, $this->leaderboard)) {
 					$this->leaderboard[$this->winner]['wins'] += 1;
-					$this->leaderboard[$this->winner]['W\L'] += $this->leaderboard[$this->winner]['wins']/max(1, $this->leaderboard[$this->winner]['losses']);
+					$this->leaderboard[$this->winner]['W\L'] = $this->leaderboard[$this->winner]['wins']/max(1, $this->leaderboard[$this->winner]['losses']);
 				} else {
 					$this->leaderboard[$this->winner]['wins'] = 1;
 					$this->leaderboard[$this->winner]['losses'] = 0;
@@ -264,7 +263,7 @@
 
 				if (array_key_exists($this->loser, $this->leaderboard)) {
 					$this->leaderboard[$this->loser]['losses'] += 1;
-					$this->leaderboard[$this->loser]['W\L'] += $this->leaderboard[$this->loser]['wins']/max(1, $this->leaderboard[$this->loser]['losses']);
+					$this->leaderboard[$this->loser]['W\L'] = $this->leaderboard[$this->loser]['wins']/max(1, $this->leaderboard[$this->loser]['losses']);
 				} else {
 					$this->leaderboard[$this->loser]['wins'] = 0;
 					$this->leaderboard[$this->loser]['losses'] = 1;
@@ -281,7 +280,7 @@
 		# set the board state to win if a win is found
 		private function checkBoardWin($move, $lastPlayer) {
 			# determine whether a player wins by checking the sum of a 
-			# row, column, and diagonal AFFECTED by the last move
+			# row, column, diagonal AFFECTED by the last move
 
 			$playerWinSum = ($lastPlayer == $this->player1 ? $this->boardLength : -1 * $this->boardLength);
 
@@ -293,7 +292,7 @@
 				$rowSum += $this->board[$i];
 			}
 			if ($rowSum == $playerWinSum) {
-				$this->winData['row'] = $row;
+				$this->boardWinPatterns['row'] = $row;
 				$this->winner = $lastPlayer;
 			}
 
@@ -305,7 +304,7 @@
 				$columnSum += $this->board[$i];
 			}
 			if ($columnSum == $playerWinSum) {
-				$this->winData['column'] = $column;
+				$this->boardWinPatterns['column'] = $column;
 				$this->winner = $lastPlayer;
 			}
 
@@ -315,7 +314,7 @@
 			$displacementRL = $this->boardLength - 1;
 			$diagonalLRSum = 0;
 			$diagonalRLSum = 0;
-			if ($move % $displacementLR == 0 or $move % $displacementRL == 0) {
+			if ($move % $displacementLR == 0 || $move % $displacementRL == 0) {
 				# move is on either diagonal
 				for ($i = 0; $i < $this->boardLength; $i++) {
 					# check every index of the diagonals
@@ -323,11 +322,11 @@
 					$diagonalRLSum += $this->board[$displacementRL + $displacementRL * $i];
 				}
 				if ($diagonalLRSum == $playerWinSum) {
-					$this->winData['diagonalLR'] = $displacementLR;
+					$this->boardWinPatterns['diagonalLR'] = $displacementLR;
 					$this->winner = $lastPlayer;
 				} 
 				if ($diagonalRLSum == $playerWinSum) {
-					$this->winData['diagonalRL'] = $displacementRL;
+					$this->boardWinPatterns['diagonalRL'] = $displacementRL;
 					$this->winner = $lastPlayer;
 				} 
 			}

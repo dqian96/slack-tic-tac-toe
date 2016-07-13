@@ -4,14 +4,14 @@
 
 	# load configuration settings from file
 	$configs = include('server-config.php');
-	if (!isset($_POST['token']) or $_POST['token'] != $configs['token']) {
+	if (!isset($_POST['token']) || $_POST['token'] != $configs['token']) {
 		# token does not exist or mismatch -- wrong team configuration or unknown client
 		$response = $configs['tokenMismatchMessage'];
 		echo $response;
 	} else {
 		# load previous game model state information
-		if (file_exists('app/tmp/' . $configs['gameSaveName'])) {
-			$state = file_get_contents('app/tmp/' . $configs['gameSaveName']);
+		if (file_exists('app/data/' . $configs['gameSaveName'])) {
+			$state = file_get_contents('app/data/' . $configs['gameSaveName']);
 			# load state from file
 			$game = unserialize($state);
 		} else {
@@ -27,7 +27,7 @@
 
 		# save game state
 		$state = serialize($game);
-		file_put_contents('app/tmp/' . $configs['gameSaveName'], $state);
+		file_put_contents('app/data/' . $configs['gameSaveName'], $state);
 		
 		# send response using cURL
 		$responseJSON = json_encode($response);

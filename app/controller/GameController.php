@@ -41,7 +41,7 @@
 		   						$response['text'] = '';
 		   						$rank = 1;
 			   					foreach ($leaderboard as $player => $score) {
-		    						$response['text'] .= $player . ' is the number ' . $rank . ' player with ' . $score['wins'] . ' wins and ' . $score['losses'] . ' losses, and having a W\L ratio of ' . $score['W\L'] . '!\n';
+		    						$response['text'] .= $player . ' is the number ' . $rank . ' player with ' . $score['wins'] . ' win(s) and ' . $score['losses'] . ' loss(es), and having a W\L ratio of ' . $score['W\L'] . '!\n';
 		    						$rank += 1;
 		    						if ($rank == 5) {
 		    							break;
@@ -78,16 +78,19 @@
 		   			switch ($action[0]) {
 		   				# command to start a new game
 		   				case 'play':
-		   					if (count($action) != 3 or strval($action[2]) != strval(intval($action[2]))) {
+		   					if (count($action) != 3 || strval($action[2]) != strval(intval($action[2]))) {
 		   						# throw syntax error if wrong number of parameters or incorrect parameter types (i.e. not an integer)
 		   						throw new SyntaxException($text);	
 		   					}
 		   					$this->game->newGame($action[2], $username, $action[1]);
 		   					$response['text'] = 'Game started between ' . $username . ' (X) and ' . $action[1] . ' (O)! ' . $username . ' goes first!' ;
+		   					$boardImageData = $this->getBoardImageData();
+		   					$response['attachments'] = array();
+		   					array_push($response['attachments'], $boardImageData);
 		   					break;
 		   				# command to play a move
 		   				case 'move':
-		   				   	if (count($action) != 2 or strval($action[1]) != strval(intval($action[1]))) {
+		   				   	if (count($action) != 2 || strval($action[1]) != strval(intval($action[1]))) {
 		   						throw new SyntaxException($text);	
 		   					}
 		   					$this->game->makeMove($username, $action[1]);
@@ -120,8 +123,8 @@
 			# get board image URL
 			$board = $this->game->getBoard();
 			$boardLength = $this->game->getBoardLength();
-			$winData = $this->game->getWinData();
-			$boardImage = new GameBoardImage($boardLength, $board, $winData);
+			$boardWinPatterns = $this->game->getBoardWinPatterns();
+			$boardImage = new GameBoardImage($boardLength, $board, $boardWinPatterns);
 			$boardImageURL = $boardImage->outputImage();
 
 			$numTurn = $this->game->getNumberOfTurns();

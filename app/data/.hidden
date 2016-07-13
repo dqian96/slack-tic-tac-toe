@@ -1,0 +1,1 @@
+A directory for storing the game state (persistent game model). A database is not used because it is too much overhead for such a small amount of data.
