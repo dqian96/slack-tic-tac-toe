@@ -42,7 +42,7 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
 			'Content-Length: ' . strlen($responseJSON)),
-			'Status': 200
+			'Status: 200'
 		);
 		curl_exec($ch);
 		curl_close($ch);
