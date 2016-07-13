@@ -5,7 +5,7 @@
 		
 		# mandatory message and (invalid) board length
 	    public function __construct($boardLength, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	   		parent::__construct($configs['boardExceptionMessage'], $code, $previous);
 	   		$this->boardLength = $boardLength;
 	    }
@@ -29,7 +29,7 @@
 
 		# mandatory message and (invalid) player
 	    public function __construct($playerNotInGame, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	   		parent::__construct($configs['playerNotInGameExceptionMessage'], $code, $previous);
 	   		$this->playerNotInGame = $playerNotInGame;
 	    }
@@ -53,7 +53,7 @@
 
 		# mandatory message and valid and invalid players
 	    public function __construct($wrongPlayer, $playerWithTurnRight, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	   		parent::__construct($configs['wrongTurnExceptionMessage'], $code, $previous);
 	   		$this->playerWithTurnRight = $playerWithTurnRight;
 	   		$this->wrongPlayer = $wrongPlayer;
@@ -82,7 +82,7 @@
 		# $falsePositive == 1: assumed game exists, but it doesn't
 		# $falsePositive == 0: assumed game doesn't exist, but it does (false negative)
 	    public function __construct($falsePositive, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	    	if ($falsePositive) {
 	    		$resultantMessage = $configs['gameDoesNotExistExceptionMessage'];
 	    	} else {
@@ -109,7 +109,7 @@
 	    }
 
 	    public function __construct($move, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	    	$this->move = $move;
 	   		parent::__construct($configs['wrongMoveExceptionMessage'], $code, $previous);
 	    }
@@ -124,7 +124,7 @@
 	# exception class for when an user attempts to fetch game data but no games were played
 	class GameNeverPlayed extends Exception {
 	    public function __construct($code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	   		parent::__construct($configs['gameNeverPlayedExceptionMessage'], $code, $previous);
 	    }
 
@@ -138,7 +138,7 @@
 	# exception class for when an user attempts to play a game with himself
 	class SamePlayerException extends Exception {
 	    public function __construct($code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+	    	$configs = include(__DIR__ . '/../resources/game-config.php');
 	   		parent::__construct($configs['samePlayerExceptionMessage'], $code, $previous);
 	    }
 

@@ -1,6 +1,6 @@
 <?php
-	require_once($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/model/Game.php');
-	require_once($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/model/GameBoardImage.php');
+	require_once(__DIR__ . '/../model/Game.php');
+	require_once(__DIR__ . '/../model/GameBoardImage.php');
 	require_once('GameControllerExceptions.php');
 
 	# controller class for the Game
@@ -11,7 +11,7 @@
 		private $game;
 
 		public function __construct($game) {
-			$this->configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/controller-config.php');
+			$this->configs = include(__DIR__ . '/../resources/controller-config.php');
 			$this->game = $game;
    		}
 

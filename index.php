@@ -1,6 +1,6 @@
 <?php
-	require_once('app/model/Game.php');
-	require_once('app/controller/GameController.php'); 
+	require_once(__DIR__ . '/app/model/Game.php');
+	require_once(__DIR__ . '/app/controller/GameController.php'); 
 
 	# load configuration settings from file
 	$configs = include('server-config.php');

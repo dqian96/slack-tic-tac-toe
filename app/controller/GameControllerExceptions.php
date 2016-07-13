@@ -5,7 +5,7 @@
 
 		# mandatory message and (invalid) command
 	    public function __construct($command, $code = 0, Exception $previous = null) {
-	    	$configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/controller-config.php');
+	    	$configs = include(__DIR__ . '/../resources/controller-config.php');
 	   		parent::__construct($configs['syntaxExceptionMessage'], $code, $previous);
 	   		$this->command = $command;
 	    }

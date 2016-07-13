@@ -5,7 +5,7 @@
 		private $configs;
 
 		public function __construct($boardLength, $moves, $boardWinPatterns) {
-			$this->configs = include($_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/app/resources/game-config.php');
+			$this->configs = include(__DIR__ . '/../resources/game-config.php');
 			$squareLength = $this->configs['squareLength'];
 			# create a new image resource
 			$this->boardResource = imagecreatetruecolor($boardLength * $squareLength, $boardLength * $squareLength);
