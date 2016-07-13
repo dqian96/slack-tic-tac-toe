@@ -11,7 +11,7 @@
 	} else {
 		$gameStateForChannelFileName = $_POST['channel_id'] . '-' . $configs['gameSaveName'];
 		# load previous game model state information
-		if (file_exists('app/data/' . )) {
+		if (file_exists('app/data/' . $gameStateForChannelFileName)) {
 			$state = file_get_contents('app/data/' . $gameStateForChannelFileName);
 			# load state from file
 			$game = unserialize($state);
