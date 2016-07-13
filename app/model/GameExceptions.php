@@ -1,12 +1,12 @@
 <?php
 	# exception class for game board errors
 	class BoardException extends Exception {
-		const private $boardLength;
-		const private $configs;
+		private $boardLength;
+		private $configs;
 
 		# mandatory message and (invalid) board length
 	    public function __construct($boardLength, $code = 0, Exception $previous = null) {
-	    	$configs = include('../resources/game-config.php');
+	    	$configs = include($_SERVER['DOCUMENT_ROOT'].'/slack-tic-tac-toe/app/resources/game-config.php');
 	   		parent::__construct($configs['boardExceptionMessage'], $code, $previous);
 	   		$this->boardLength = $boardLength;
 	    }
@@ -18,15 +18,15 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $message . '<br>' . "The board length that was entered is: " . $boardLength;
+	    	$error = $this->message . '\n' . "The board length that was entered is: " . $this->boardLength;
 	    	return $error;
 	    }
 	}
 
 	# exception class for when a player not in the game tries to make a move  
 	class PlayerNotInGameException extends Exception {
-		const private $playerNotInGame;
-		const private $configs;
+		private $playerNotInGame;
+		private $configs;
 
 		# mandatory message and (invalid) player
 	    public function __construct($playerNotInGame, $code = 0, Exception $previous = null) {
@@ -42,16 +42,16 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $message . '<br>' . "The player who tried to make a move was: " . $playerNotInGame;
+	    	$error = $this->message . '\n' . "The player who tried to make a move was: " . $playerNotInGame;
 	    	return $error;
 	    }
 	}
 
 	# exception class for when a player tries to make a move, but does not have turn right
 	class WrongTurnException extends Exception {
-		const private $playerWithTurnRight;
-		const private $wrongPlayer;
-		const private $configs;
+		private $playerWithTurnRight;
+		private $wrongPlayer;
+		private $configs;
 
 		# mandatory message and valid and invalid players
 	    public function __construct($wrongPlayer, $playerWithTurnRight, $code = 0, Exception $previous = null) {
@@ -73,14 +73,14 @@
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $message . '<br>' . "It is not " . $wrongPlayer "'s turn to play... " . $playerWithTurnRight . "must play.";
+	    	$error = $this->message . '\n' . 'It is not ' . $wrongPlayer . '\'s turn to play... ' . $playerWithTurnRight . 'must play.';
 	    	return $error;
 	    }
 	}
 
 	# exception class for when a game either exists or does not exist, but it is assumed otherwise
 	class GameExistenceException extends Exception {
-		const private $configs;
+		private $configs;
 
 		# mandatory message determined by $falsePositive
 		# $falsePositive == 1: assumed game exists, but it doesn't
@@ -88,16 +88,16 @@
 	    public function __construct($falsePositive, $code = 0, Exception $previous = null) {
 	    	$configs = include('../resources/game-config.php');
 	    	if ($falsePositive) {
-	    		$resultantMessage = $configs['gameDoesNotExistExceptionMessage']
+	    		$resultantMessage = $configs['gameDoesNotExistExceptionMessage'];
 	    	} else {
-	    		$resultantMessage = $configs['gameDoesExistExceptionMessage']
+	    		$resultantMessage = $configs['gameDoesExistExceptionMessage'];
 	    	}
 	   		parent::__construct($resultantMessage, $code, $previous);
 	    }
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $message;
+	    	$error = $this->message;
 	    	return $error;
 	    }
 	}
@@ -105,8 +105,8 @@
 	# exception class for when a wrong move is played
 	# i.e. already played or out of range of board
 	class WrongMoveException extends Exception {
-		const private $configs;
-		const private $move;
+		private $configs;
+		private $move;
 
 		# getter for wrong move
 	    public function getMove() {
@@ -116,12 +116,12 @@
 	    public function __construct($move, $code = 0, Exception $previous = null) {
 	    	$configs = include('../resources/game-config.php');
 	    	$this->move = $move;
-	   		parent::__construct($configs['wrongMoveExceptionMessage', $code, $previous);
+	   		parent::__construct($configs['wrongMoveExceptionMessage'], $code, $previous);
 	    }
 
 	    # format an user-friendly error 
 	    public function __toString() {
-	    	$error = $message . ' The move was: '. $move . '.';
+	    	$error = $this->message . ' The move was: '. $move . '.';
 	    	return $error;
 	    }
 	}

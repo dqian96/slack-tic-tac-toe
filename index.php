@@ -4,34 +4,39 @@
 
 	# load configuration settings from file
 	$configs = include('server-config.php');
-
-	if (!(isset($_POST['token']) or $_POST['token'] != $configs['token']) {
+	if (!isset($_POST['token']) or $_POST['token'] != $configs['token']) {
 		# token does not exist or mismatch -- wrong team configuration or unknown client
 		$response = $configs['tokenMismatchMessage'];
 		echo $response;
 	} else {
 		# load previous game model state information
-		$state = file_get_contents('app/resources/' + configs['gameSaveName']);
-		if (!$state) {
-			# create a new game model if no state exists
-			$game = new Game;
-		} else {
+		if (file_exists('app/tmp/' . $configs['gameSaveName'])) {
+			$state = file_get_contents('app/tmp/' . $configs['gameSaveName']);
 			# load state from file
 			$game = unserialize($state);
+		} else {
+			# create a new game model if no state exists
+			$game = new Game;
 		}
 
 		# create a new game controller and pass the game model to it
 		$gameController = new GameController($game);
 
-		# pass the user command to the controller
+		# pass the username and user command to the controller
 		$response = $gameController->command($_POST['text'], $_POST['user_name']);
 
 		# save game state
 		$state = serialize($game);
-		file_put_contents('app/resources/' + configs['gameSaveName'], $state);
+		file_put_contents('app/tmp/' . $configs['gameSaveName'], $state);
 		
+		# send response using cURL
 		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
+
+		// TESTING
+		echo $responseJSON;
+		exit();
+
 
 		$ch = curl_init($_POST['response_url']);
 		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
@@ -43,6 +48,3 @@
 		curl_exec($ch);
 	}
 ?>
-
-
-
