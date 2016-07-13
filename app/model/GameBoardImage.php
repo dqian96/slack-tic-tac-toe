@@ -29,7 +29,7 @@
 		public function outputImage() {
 			//header('Content-Type: image/png');
 			$savePath = $_SERVER['DOCUMENT_ROOT'] . '/slack-tic-tac-toe/public/images/' . $this->configs['boardImageName'];
-			$publicPath = $_SERVER['SERVER_NAME'] . '/public/images/' . $this->configs['boardImageName'];
+			$publicPath = __DIR__ . '/../../public/images/' . $this->configs['boardImageName'];
 			imagepng($this->boardResource, $savePath);
 			return $publicPath;
 		}
