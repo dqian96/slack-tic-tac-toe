@@ -34,6 +34,12 @@
 		   					$response['attachments'] = array();
 		   					array_push($response['attachments'], $boardImageData);
 		   					break;
+		   				# command to output whose turn it is
+		   				case 'turn':
+		   					$response['response_type'] = 'ephemeral';
+		   					$currentPlayer = $this->game->getCurrentPlayer();
+		   					$response['text'] = 'It is ' . $currentPlayer . "'s turn to play!";
+		   					break;
 		   				# command to fetch leaderboard
 		   				case 'leaderboard':
 		   					$response['response_type'] = 'ephemeral';
