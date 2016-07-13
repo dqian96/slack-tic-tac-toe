@@ -30,8 +30,6 @@
 		$state = serialize($game);
 		file_put_contents('app/data/' . $gameStateForChannelFileName, $state);
 		
-		echo; 
-		
 		# send response using cURL
 		$responseJSON = json_encode($response, JSON_UNESCAPED_SLASHES);
 
