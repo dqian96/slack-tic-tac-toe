@@ -28,15 +28,17 @@
 		   			switch ($action[0]) {
 		   				# command to fetch game board
 		   				case 'board':
+		   					$response['response_type'] = 'ephemeral';
 		   					$boardImageData = $this->getBoardImageData();
 		   					$response['attachments'] = array();
 		   					array_push($response['attachments'], $boardImageData);
 		   					break;
 		   				# command to fetch leaderboard
 		   				case 'leaderboard':
+		   					$response['response_type'] = 'ephemeral';
 		   					$leaderboard = $this->game->getLeaderboard();
 		   					if (count($leaderboard) == 0) {
-		   						$response['text'] = 'No data yet.';
+		   						$response['text'] = 'No data yet!';
 		   					} else {
 		   						$response['text'] = '';
 		   						$rank = 1;
@@ -51,11 +53,13 @@
 		   					break;
 		   				# command to fetch help menu
 		   				case 'help':
+		   				   	$response['response_type'] = 'ephemeral';
 		   					# ui to functionality mapping stored in controller
 		   					$response['text'] = $this->configs['helpData'];
 		   					break;
 		   				# command to resign a game
 		   				case 'resign':
+		  		   			$response['response_type'] = 'in_channel';
 		   					$this->game->resign($username);
 		   					$winner = $this->game->getWinner();
 		   					$loser = $this->game->getLoser();
@@ -63,6 +67,7 @@
 		   					break;
 		   				# command to raise a tie flag
 		   				case 'tie':
+		   		  		   	$response['response_type'] = 'in_channel';
 		   					$this->game->raiseTieFlag($username);
 		   					if (!$this->game->getGameAlive()) {
 		   						$response['text'] = 'Game tied!';
@@ -78,6 +83,7 @@
 		   			switch ($action[0]) {
 		   				# command to start a new game
 		   				case 'play':
+		  		   		  	$response['response_type'] = 'in_channel';
 		   					if (count($action) != 3 || strval($action[2]) != strval(intval($action[2]))) {
 		   						# throw syntax error if wrong number of parameters or incorrect parameter types (i.e. not an integer)
 		   						throw new SyntaxException($text);	
@@ -90,6 +96,7 @@
 		   					break;
 		   				# command to play a move
 		   				case 'move':
+		   		   		  	$response['response_type'] = 'in_channel';
 		   				   	if (count($action) != 2 || strval($action[1]) != strval(intval($action[1]))) {
 		   						throw new SyntaxException($text);	
 		   					}
@@ -113,6 +120,7 @@
 		   			}
 	   			} 
 	   		} catch (Exception $e) {
+	   			$response['response_type'] = 'ephemeral';
 	   			$response['text'] = $e->__toString();
 	   		}
 	   		return $response;

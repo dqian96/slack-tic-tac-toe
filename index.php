@@ -9,9 +9,10 @@
 		$response = $configs['tokenMismatchMessage'];
 		echo $response;
 	} else {
+		$gameStateForChannelFileName = $_POST['channel_id'] . '-' . $configs['gameSaveName'];
 		# load previous game model state information
-		if (file_exists('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName'])) {
-			$state = file_get_contents('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName']);
+		if (file_exists('app/data/' . )) {
+			$state = file_get_contents('app/data/' . $gameStateForChannelFileName);
 			# load state from file
 			$game = unserialize($state);
 		} else {
@@ -27,13 +28,10 @@
 
 		# save game state
 		$state = serialize($game);
-		file_put_contents('app/data/' . $_POST['channel_id'] . '-' . $configs['gameSaveName'], $state);
+		file_put_contents('app/data/' . $gameStateForChannelFileName);
 		
-		$response['response_type'] = 'in_channel';
-		$response['unfurl_links'] = true;
-
 		# send response using cURL
-		$responseJSON = json_encode($response);
+		$responseJSON = json_encode($response, JSON_UNESCAPED_SLASHES);
 		$userAgent = 'Tic-Tac-Toe/1.0';
 
 		$ch = curl_init($_POST['response_url']);
