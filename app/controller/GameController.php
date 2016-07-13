@@ -30,6 +30,13 @@
 		   				case 'board':
 		   					$response['response_type'] = 'ephemeral';
 		   					$boardImageData = $this->getBoardImageData();
+
+		   					if ($this->game->getGameAlive()) {
+		   						$boardImageData['title'] = 'It is currently ' . $this->game->getCurrentPlayer() . "'s turn to play!";
+		   					} else {
+		   						$boardImageData['title'] = 'Previous game board';
+		   					}
+
 		   					$response['attachments'] = array();
 		   					array_push($response['attachments'], $boardImageData);
 		   					break;

@@ -129,6 +129,15 @@
 			return $this->leaderboard;
 		}
 
+
+		public function getCurrentPlayer() {
+			if (!$this->gameAlive) {
+				throw new GameExistenceException(1);
+			}
+			return $this->currentPlayer;
+		}
+
+
 		public function getNumberOfTurns() {
 			if ($this->neverPlayed) {
 				throw new GameNeverPlayed;
