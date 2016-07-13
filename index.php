@@ -35,7 +35,8 @@
 		$responseJSON = json_encode($response);
 		$userAgent = 'Tic-Tac-Toe/1.0';
 
-
+		echo $responseJSON;
+		exit();
 		$ch = curl_init($_POST['response_url']);
 		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $responseJSON);
