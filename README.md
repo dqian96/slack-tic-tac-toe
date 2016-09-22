@@ -1,4 +1,4 @@
-# slack-tic-tac-toe
+# Slick-Slack-Slow
 A Slack App that lets you play Tic-Tac-Toe with anyone in the team!<br/><br/>
 Features:<br/>
 -Different instances can be created in different channels<br/>
